@@ -1,0 +1,35 @@
+# Maven / Java
+warehouse-backend/target/
+warehouse-backend/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+
+# Node / Vite
+warehouse-frontend/node_modules/
+warehouse-frontend/dist/
+warehouse-frontend/.vite/
+
+# Environment files (never commit secrets)
+.env
+warehouse-frontend/.env
+warehouse-backend/.env
+*.env.local
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# H2 database files (if ever persisted)
+*.mv.db
+*.trace.db

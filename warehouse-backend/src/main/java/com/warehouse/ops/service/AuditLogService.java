@@ -5,6 +5,7 @@ import com.warehouse.ops.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,10 +25,12 @@ public class AuditLogService {
         return auditLogRepository.save(entry);
     }
 
+    @Transactional(readOnly = true)
     public List<AuditLog> getByTicket(UUID ticketId) {
         return auditLogRepository.findByTicketIdOrderByTimestampDesc(ticketId);
     }
 
+    @Transactional(readOnly = true)
     public List<AuditLog> getAll(int page, int size) {
         return auditLogRepository.findAllByOrderByTimestampDesc(PageRequest.of(page, size)).getContent();
     }

@@ -15,9 +15,10 @@ warehouse-frontend/.vite/
 
 # Environment files (never commit secrets)
 .env
-warehouse-frontend/.env
-warehouse-backend/.env
+*.env
 *.env.local
+*.env.production
+*.env.development
 
 # macOS
 .DS_Store

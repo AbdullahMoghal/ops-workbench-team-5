@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import logoLight from '../assets/18.svg'
 
 const DEMO_ACCOUNTS = [
-  { email: 'admin@warehouse.demo',       role: 'Admin',              icon: '🔑' },
-  { email: 'ops@warehouse.demo',         role: 'Ops Manager',        icon: '📊' },
-  { email: 'supervisor@warehouse.demo',  role: 'Supervisor',         icon: '🗂️' },
-  { email: 'associate@warehouse.demo',   role: 'Associate',          icon: '📦' },
+  { email: 'admin@warehouse.demo',       role: 'Admin',         initial: 'AD' },
+  { email: 'ops@warehouse.demo',         role: 'Ops Manager',   initial: 'OM' },
+  { email: 'supervisor@warehouse.demo',  role: 'Supervisor',    initial: 'SV' },
+  { email: 'associate@warehouse.demo',   role: 'Associate',     initial: 'WA' },
 ]
 
 export default function Login() {
@@ -44,14 +45,7 @@ export default function Login() {
         {/* Logo / Brand */}
         <div style={styles.brandRow}>
           <div style={styles.logoBox}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-          </div>
-          <div>
-            <div style={styles.brandName}>WarehouseOps</div>
-            <div style={styles.brandSub}>Exception &amp; Resolution Workbench</div>
+            <img src={logoLight} alt="Warehouse Ops" style={{ height: 32, width: 'auto', display: 'block' }} />
           </div>
         </div>
 
@@ -105,7 +99,7 @@ export default function Login() {
                   onMouseEnter={e => e.currentTarget.style.borderColor = '#e55a2b'}
                   onMouseLeave={e => e.currentTarget.style.borderColor = '#e0d9d0'}
                 >
-                  <span style={{ fontSize: 20 }}>{acc.icon}</span>
+                  <div style={styles.demoBtnAvatar}>{acc.initial}</div>
                   <div>
                     <div style={styles.demoBtnRole}>{acc.role}</div>
                     <div style={styles.demoBtnEmail}>{acc.email}</div>
@@ -138,16 +132,14 @@ const styles = {
     boxShadow: '0 4px 32px rgba(0,0,0,0.10)',
   },
   brandRow: {
-    display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28
+    display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 28,
   },
   logoBox: {
-    width: 48, height: 48, borderRadius: 12,
+    padding: '12px 20px',
     background: 'linear-gradient(135deg, #e55a2b, #c94a22)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    flexShrink: 0,
+    borderRadius: 12,
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
   },
-  brandName: { fontSize: 17, fontWeight: 700, color: '#1a1a2e' },
-  brandSub: { fontSize: 11, color: '#888', marginTop: 1 },
   title: { fontSize: 22, fontWeight: 700, color: '#1a1a2e', marginBottom: 20 },
   demoBanner: {
     background: '#fff8f0', border: '1px solid #f5c396', borderRadius: 8,
@@ -174,6 +166,12 @@ const styles = {
     display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
     background: '#faf8f5', border: '1.5px solid #e0d9d0', borderRadius: 10,
     cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.15s',
+  },
+  demoBtnAvatar: {
+    width: 32, height: 32, borderRadius: '50%',
+    background: '#e85d04', color: '#fff',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 11, fontWeight: 700, flexShrink: 0,
   },
   demoBtnRole: { fontSize: 13, fontWeight: 600, color: '#1a1a2e' },
   demoBtnEmail: { fontSize: 11, color: '#888' },

@@ -61,7 +61,11 @@ export default function ReportIssue() {
           <p>Log discrepancies and process exceptions found on the warehouse floor.</p>
         </div>
         <div className="card" style={{ maxWidth: 600, textAlign: 'center', padding: 48 }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <svg width="28" height="28" fill="none" stroke="#15803d" strokeWidth="2.5" viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
           <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Ticket Submitted</h2>
           <p style={{ color: 'var(--text-muted)', marginBottom: 8 }}>
             Your exception has been logged and is now in the supervisor review queue.

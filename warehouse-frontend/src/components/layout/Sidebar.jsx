@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import logoOrange from '../../assets/17.svg'
 
 const NAV_ITEMS = [
   {
@@ -62,12 +63,7 @@ export default function Sidebar() {
     <aside style={styles.sidebar}>
       {/* Logo */}
       <div style={styles.logo}>
-        <div style={styles.logoIcon}>
-          <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
-            <path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zm-9 9H7v-2h4v2zm6-4H7v-2h10v2zM12 3l-8 4h16L12 3z"/>
-          </svg>
-        </div>
-        <span style={styles.logoText}>Warehouse Ops</span>
+        <img src={logoOrange} alt="Warehouse Ops" style={styles.logoImg} />
       </div>
 
       {/* User info */}
@@ -126,23 +122,14 @@ const styles = {
   logo: {
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
-    padding: '20px 16px',
+    justifyContent: 'center',
+    padding: '16px 20px',
     borderBottom: '1px solid var(--border)',
   },
-  logoIcon: {
-    width: 34,
-    height: 34,
-    background: 'var(--accent)',
-    borderRadius: 8,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoText: {
-    fontWeight: 800,
-    fontSize: 15,
-    color: 'var(--text-primary)',
+  logoImg: {
+    height: 40,
+    width: 'auto',
+    display: 'block',
   },
   userInfo: {
     display: 'flex',

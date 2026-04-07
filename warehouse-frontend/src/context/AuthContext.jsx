@@ -55,15 +55,41 @@ export function AuthProvider({ children }) {
 
   async function fetchAppUser(session) {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/users`, {
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      })
-      if (res.ok) {
-        const data = await res.json()
-        const matched = data.data?.find(u => u.email === session.user.email)
-        setAppUser(matched || null)
+      // Query Supabase directly for the user profile + role name
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, full_name, email, status, roles(name)')
+        .eq('email', session.user.email)
+        .single()
+
+      if (!error && data) {
+        setAppUser({
+          id: data.id,
+          fullName: data.full_name,
+          email: data.email,
+          roleName: data.roles?.name || 'WarehouseAssociate',
+          status: data.status,
+        })
+        setLoading(false)
+        return
       }
     } catch {}
+
+    // Fallback: try backend API if Supabase query failed
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL
+      if (apiUrl) {
+        const res = await fetch(`${apiUrl}/api/users`, {
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        })
+        if (res.ok) {
+          const data = await res.json()
+          const matched = data.data?.find(u => u.email === session.user.email)
+          if (matched) { setAppUser(matched); setLoading(false); return }
+        }
+      }
+    } catch {}
+
     setLoading(false)
   }
 

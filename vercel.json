@@ -1,0 +1,13 @@
+{
+  "buildCommand": "cd warehouse-frontend && npm install && npm run build",
+  "outputDirectory": "warehouse-frontend/dist",
+  "installCommand": "echo 'skip root install'",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "env": {
+    "VITE_SUPABASE_URL": "https://REDACTED.supabase.co",
+    "VITE_SUPABASE_ANON_KEY": "REDACTED_ANON_KEY"
+  }
+}

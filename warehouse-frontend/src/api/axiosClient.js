@@ -29,9 +29,9 @@ axiosClient.interceptors.request.use(config => {
   return config
 })
 
-// Unwrap ApiResponse wrapper: { success, message, data } → return data
+// Pass through raw response so API files can unwrap { success, message, data } themselves
 axiosClient.interceptors.response.use(
-  res => res.data?.data !== undefined ? { ...res, data: res.data.data } : res,
+  res => res,
   err => Promise.reject(err)
 )
 

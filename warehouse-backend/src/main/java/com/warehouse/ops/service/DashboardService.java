@@ -24,7 +24,8 @@ public class DashboardService {
         long total = ticketRepository.count();
 
         resp.setOpenExceptions(open);
-        resp.setTotalDiscrepancyValue(ticketRepository.sumOpenDiscrepancyValue());
+        java.math.BigDecimal rawSum = ticketRepository.sumOpenDiscrepancyValue();
+        resp.setTotalDiscrepancyValue(rawSum != null ? rawSum : java.math.BigDecimal.ZERO);
         resp.setResolutionRate(total > 0 ? Math.round((double) resolved / total * 1000.0) / 10.0 : 0.0);
 
         // Average resolution hours — computed from tickets with closedAt
@@ -34,7 +35,7 @@ public class DashboardService {
         // Status breakdown map
         Map<String, Long> statusMap = new LinkedHashMap<>();
         for (Object[] row : ticketRepository.countGroupByStatus()) {
-            statusMap.put((String) row[0], (Long) row[1]);
+            statusMap.put((String) row[0], ((Number) row[1]).longValue());
         }
         resp.setStatusBreakdown(statusMap);
 

@@ -49,16 +49,16 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     @Query("SELECT t.ticketType, COUNT(t) FROM Ticket t GROUP BY t.ticketType ORDER BY COUNT(t) DESC")
     List<Object[]> countGroupByType();
 
-    @Query("SELECT COALESCE(SUM(t.estimatedValueImpact), 0.00) FROM Ticket t WHERE t.status NOT IN ('resolved','closed')")
+    @Query("SELECT SUM(t.estimatedValueImpact) FROM Ticket t WHERE t.status NOT IN ('resolved','closed')")
     java.math.BigDecimal sumOpenDiscrepancyValue();
 
     /** Count for today resolved (for KPI card) */
     @Query("SELECT COUNT(t) FROM Ticket t WHERE t.status = 'resolved' AND t.updatedAt >= :since")
     long countResolvedSince(@Param("since") OffsetDateTime since);
 
-    @Query("SELECT COUNT(t) FROM Ticket t WHERE t.assignedTo IS NOT NULL AND t.status NOT IN ('resolved','closed','rejected')")
+    @Query(value = "SELECT COUNT(*) FROM tickets WHERE assigned_to_user_id IS NOT NULL AND status NOT IN ('resolved','closed','rejected')", nativeQuery = true)
     long countAssigned();
 
-    @Query("SELECT COUNT(t) FROM Ticket t WHERE t.assignedTo IS NULL AND t.status NOT IN ('resolved','closed','rejected')")
+    @Query(value = "SELECT COUNT(*) FROM tickets WHERE assigned_to_user_id IS NULL AND status NOT IN ('resolved','closed','rejected')", nativeQuery = true)
     long countUnassigned();
 }

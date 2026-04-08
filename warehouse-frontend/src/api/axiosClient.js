@@ -1,19 +1,30 @@
 import axios from 'axios'
-import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || ''
-const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 const IS_DEMO = !SUPABASE_URL || SUPABASE_URL === 'your-supabase-url'
 
-// Separate lightweight client for reading the session token (avoids circular imports)
-const _supabase = IS_DEMO ? null : createClient(SUPABASE_URL, SUPABASE_ANON)
+// Derive the Supabase project ref from the URL (e.g. "qlvmbrglkutmplvgqtzq")
+// Supabase JS v2 stores the session at: sb-{projectRef}-auth-token
+const _projectRef = SUPABASE_URL.match(/\/\/([^.]+)\./)?.[1] || ''
+
+function getSupabaseToken() {
+  if (!_projectRef) return null
+  try {
+    const raw = localStorage.getItem(`sb-${_projectRef}-auth-token`)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    return parsed?.access_token || null
+  } catch {
+    return null
+  }
+}
 
 const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '',
   headers: { 'Content-Type': 'application/json' },
 })
 
-axiosClient.interceptors.request.use(async config => {
+axiosClient.interceptors.request.use(config => {
   if (IS_DEMO) {
     // In demo mode, pass the selected user's email so the backend can identify them
     const saved = sessionStorage.getItem('demo_user')
@@ -22,13 +33,9 @@ axiosClient.interceptors.request.use(async config => {
       config.headers['X-Demo-User-Email'] = u.email
     }
   } else {
-    // Real mode: get the Supabase session token directly from the client
-    try {
-      const { data: { session } } = await _supabase.auth.getSession()
-      if (session?.access_token) {
-        config.headers['Authorization'] = `Bearer ${session.access_token}`
-      }
-    } catch {}
+    // Real mode: read the Supabase JWT synchronously from localStorage
+    const token = getSupabaseToken()
+    if (token) config.headers['Authorization'] = `Bearer ${token}`
   }
   return config
 })

@@ -35,7 +35,10 @@ public class SecurityConfig {
             // Dev/demo mode: allow everything without authentication
             http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         } else {
+            http.cors(org.springframework.security.config.Customizer.withDefaults());
             http.authorizeHttpRequests(auth -> auth
+                // Always permit CORS preflight requests
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/api/users/**", "/api/roles/**").hasAnyRole("Admin")

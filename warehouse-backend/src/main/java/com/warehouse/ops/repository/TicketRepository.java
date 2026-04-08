@@ -22,6 +22,8 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
 
     List<Ticket> findByAssignedToIsNullOrderByCreatedAtDesc();
 
+    List<Ticket> findAllByOrderByCreatedAtDesc();
+
     @Query("SELECT t FROM Ticket t WHERE " +
            "(:status IS NULL OR t.status = :status) AND " +
            "(:priority IS NULL OR t.priority = :priority) AND " +
@@ -47,7 +49,7 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     @Query("SELECT t.ticketType, COUNT(t) FROM Ticket t GROUP BY t.ticketType ORDER BY COUNT(t) DESC")
     List<Object[]> countGroupByType();
 
-    @Query("SELECT COALESCE(SUM(t.estimatedValueImpact), 0) FROM Ticket t WHERE t.status NOT IN ('resolved','closed')")
+    @Query("SELECT COALESCE(SUM(t.estimatedValueImpact), 0.00) FROM Ticket t WHERE t.status NOT IN ('resolved','closed')")
     java.math.BigDecimal sumOpenDiscrepancyValue();
 
     /** Count for today resolved (for KPI card) */

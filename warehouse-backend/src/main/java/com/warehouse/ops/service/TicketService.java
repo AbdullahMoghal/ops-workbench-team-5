@@ -65,6 +65,10 @@ public class TicketService {
         // Convert empty strings to null so the JPQL ":status IS NULL" check works correctly
         String s = (status != null && !status.isBlank()) ? status : null;
         String p = (priority != null && !priority.isBlank()) ? priority : null;
+        // Use a simple findAll when no filters are active (avoids nullable-param JPQL issues)
+        if (s == null && p == null && from == null && to == null) {
+            return ticketRepository.findAllByOrderByCreatedAtDesc();
+        }
         return ticketRepository.findFiltered(s, p, from, to);
     }
 

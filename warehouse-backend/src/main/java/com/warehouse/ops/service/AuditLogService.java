@@ -32,6 +32,6 @@ public class AuditLogService {
 
     @Transactional(readOnly = true)
     public List<AuditLog> getAll(int page, int size) {
-        return auditLogRepository.findAllWithTicketOrderByTimestampDesc(PageRequest.of(page, size));
+        return auditLogRepository.findAllByOrderByTimestampDesc(PageRequest.of(page, size)).getContent();
     }
 }

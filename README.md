@@ -33,7 +33,7 @@ A full-stack warehouse operations platform for reporting, reviewing, resolving, 
 
 **Tech stack:**
 - Frontend: React 18 + Vite 5 + JavaScript + Recharts + react-hook-form
-- Backend: Java 17, Spring Boot 3.2, Spring Security, Spring Data JPA
+- Backend: Java 21, Spring Boot 3.2, Spring Security, Spring Data JPA
 - Database: Supabase (Postgres 15) + Supabase Auth
 - Styling: Custom CSS variables — warm cream/beige theme matching design deck
 
@@ -80,7 +80,7 @@ insy-4325-team-5/
 
 ### Prerequisites
 - Node.js 18+
-- Java 17 (e.g., OpenJDK 17)
+- Java 21 (e.g., OpenJDK 21)
 - Maven 3.9+
 - A Supabase project (free tier works fine)
 
@@ -117,8 +117,8 @@ cp .env.example .env
 # Edit .env with your Supabase credentials
 
 # Run (env vars loaded via IDE or export them manually)
-export SUPABASE_DB_URL=jdbc:postgresql://db.<ref>.supabase.co:5432/postgres
-export SUPABASE_DB_USER=postgres
+export SUPABASE_DB_URL=jdbc:postgresql://aws-1-us-east-2.pooler.supabase.com:6543/postgres?sslmode=require
+export SUPABASE_DB_USER=postgres.<project-ref>
 export SUPABASE_DB_PASSWORD=<your-db-password>
 export SUPABASE_JWT_SECRET=<your-jwt-secret>
 
@@ -129,7 +129,10 @@ Backend runs at `http://localhost:8080`
 
 Health check: `GET http://localhost:8080/api/health`
 
-> **Note:** `spring.jpa.hibernate.ddl-auto=validate` — the schema must already exist in Supabase before starting. Run the migrations first.
+> **Notes:**
+> - The app expects schema/tables to exist from migrations (`supabase/migrations/*.sql`) and runs with `spring.jpa.hibernate.ddl-auto=none`.
+> - For cloud/runtime environments, use Supabase **pooler** host + `postgres.<project-ref>` username format to avoid connection issues.
+> - JDBC prepared statements are disabled in production config for PgBouncer transaction-pool compatibility.
 
 ---
 
@@ -209,12 +212,12 @@ The `002_seed.sql` file contains:
 ### Backend (`warehouse-backend/.env`)
 | Variable | Description |
 |----------|-------------|
-| `SUPABASE_DB_URL` | JDBC connection string for Supabase Postgres |
-| `SUPABASE_DB_USER` | Database user (usually `postgres`) |
+| `SUPABASE_DB_URL` | JDBC connection string for Supabase Postgres (recommended: pooler URL with `sslmode=require`) |
+| `SUPABASE_DB_USER` | Database user for pooler format: `postgres.<project-ref>` |
 | `SUPABASE_DB_PASSWORD` | Database password |
 | `SUPABASE_JWT_SECRET` | JWT secret from Supabase Settings → API |
 | `PORT` | Server port (default `8080`) |
-| `CORS_ORIGINS` | Allowed frontend origins (default `http://localhost:5173`) |
+| `CORS_ORIGINS` | Allowed frontend origins (include local + deployed Vercel domain) |
 
 ### Frontend (`warehouse-frontend/.env`)
 | Variable | Description |
@@ -222,6 +225,38 @@ The `002_seed.sql` file contains:
 | `VITE_SUPABASE_URL` | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Supabase anon/public key |
 | `VITE_API_URL` | Spring Boot base URL (default `http://localhost:8080`) |
+
+---
+
+## Deployment (Current Setup)
+
+### Frontend — Vercel
+- Root/build target: `warehouse-frontend`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Required env vars in Vercel:
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
+  - `VITE_API_URL` (your Railway backend URL)
+- `vercel.json` rewrites are configured so client-side routes (e.g. `/dashboard`) resolve correctly.
+
+### Backend — Railway
+- Root directory: `warehouse-backend`
+- Runtime: Java 21 + Maven build
+- Required env vars in Railway:
+  - `SUPABASE_DB_URL` (pooler JDBC URL)
+  - `SUPABASE_DB_USER` (`postgres.<project-ref>`)
+  - `SUPABASE_DB_PASSWORD`
+  - `SUPABASE_JWT_SECRET`
+  - `SPRING_PROFILES_ACTIVE=prod`
+  - `CORS_ORIGINS` (must include your Vercel URL)
+- Health endpoint: `/api/health`
+
+### Supabase
+- Provides:
+  - Postgres database (schema + seed data from migrations)
+  - Auth/JWT issuing
+- Backend validates Supabase JWTs and maps authenticated users to app roles from `public.users`.
 
 ---
 
@@ -234,4 +269,4 @@ The `002_seed.sql` file contains:
 - [ ] Full-text search across tickets
 - [ ] Export to PDF in Reports page (currently CSV only)
 - [ ] Supabase Row Level Security (RLS) policies for production hardening
-- [ ] Refresh token handling in Axios interceptor for long sessions
+- [ ] Add explicit token refresh handling for very long-running sessions

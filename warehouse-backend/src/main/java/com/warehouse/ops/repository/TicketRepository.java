@@ -61,4 +61,8 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
 
     @Query(value = "SELECT COUNT(*) FROM tickets WHERE assigned_to_user_id IS NULL AND status NOT IN ('resolved','closed','rejected')", nativeQuery = true)
     long countUnassigned();
+
+    /** Returns the highest numeric suffix of any EX-NNNN ticket number, or null if no tickets exist. */
+    @Query(value = "SELECT MAX(CAST(REPLACE(ticket_number, 'EX-', '') AS INTEGER)) FROM tickets WHERE ticket_number LIKE 'EX-%'", nativeQuery = true)
+    Integer findMaxTicketSequence();
 }

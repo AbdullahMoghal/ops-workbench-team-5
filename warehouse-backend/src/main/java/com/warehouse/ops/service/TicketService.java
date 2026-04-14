@@ -4,7 +4,9 @@ import com.warehouse.ops.dto.request.*;
 import com.warehouse.ops.entity.*;
 import com.warehouse.ops.exception.*;
 import com.warehouse.ops.repository.*;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TicketService {
 
     private final TicketRepository ticketRepository;
@@ -24,8 +27,17 @@ public class TicketService {
     private final InventoryItemRepository inventoryItemRepository;
     private final AuditLogService auditLogService;
 
-    // Thread-safe sequence for demo ticket numbering
-    private static final AtomicInteger ticketSeq = new AtomicInteger(1100);
+    // Initialized from DB on startup so it never collides after a restart
+    private final AtomicInteger ticketSeq = new AtomicInteger(1100);
+
+    @PostConstruct
+    public void initTicketSequence() {
+        Integer maxSeq = ticketRepository.findMaxTicketSequence();
+        if (maxSeq != null && maxSeq >= ticketSeq.get()) {
+            ticketSeq.set(maxSeq + 1);
+        }
+        log.info("Ticket sequence initialized to {}", ticketSeq.get());
+    }
 
     @Transactional
     public Ticket create(CreateTicketRequest req, User creator) {

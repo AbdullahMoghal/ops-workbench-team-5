@@ -49,10 +49,10 @@ export default function Login() {
               src={loginLogo}
               alt="Warehouse Ops"
               style={{
-                height: 44,
+                height: 36,
                 width: 'auto',
                 display: 'block',
-                filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.12))',
+                filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.2))',
               }}
             />
           </div>
@@ -144,7 +144,9 @@ const styles = {
     display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 28,
   },
   logoBox: {
-    padding: '8px 0',
+    padding: '12px 20px',
+    background: 'linear-gradient(135deg, #e55a2b, #c94a22)',
+    borderRadius: 12,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',

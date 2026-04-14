@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import loginLogo from '../assets/login-logo.png'
+import logoLight from '../assets/18.svg'
 
 const DEMO_ACCOUNTS = [
   { email: 'admin@warehouse.demo',       role: 'Admin',         initial: 'AD' },
@@ -45,7 +45,7 @@ export default function Login() {
         {/* Logo / Brand */}
         <div style={styles.brandRow}>
           <div style={styles.logoBox}>
-            <img src={loginLogo} alt="Warehouse Ops" style={{ height: 48, width: 'auto', display: 'block' }} />
+            <img src={logoLight} alt="Warehouse Ops" style={{ height: 32, width: 'auto', display: 'block' }} />
           </div>
         </div>
 
@@ -135,10 +135,10 @@ const styles = {
     display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 28,
   },
   logoBox: {
-    padding: 0,
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: '12px 20px',
+    background: 'linear-gradient(135deg, #e55a2b, #c94a22)',
+    borderRadius: 12,
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
   },
   title: { fontSize: 22, fontWeight: 700, color: '#1a1a2e', marginBottom: 20 },
   demoBanner: {
